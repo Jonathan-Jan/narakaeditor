@@ -1,10 +1,9 @@
 import * as SRD from "storm-react-diagrams";
-import React, { Component } from 'react';
+import React from 'react';
 
 import _ from 'lodash';
 import shortid from 'shortid';
 
-const PortWidget = SRD.PortWidget ;
 const DefaultPortLabel = SRD.DefaultPortLabel;
 
 export class StepNodeModel extends SRD.NodeModel {

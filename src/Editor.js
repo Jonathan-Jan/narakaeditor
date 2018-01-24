@@ -1,30 +1,16 @@
 import React, { Component } from 'react';
 import {
 	DiagramEngine,
-	DefaultNodeFactory,
-	DefaultLinkFactory,
 	DiagramModel,
-	DefaultNodeModel,
-	LinkModel,
-	DefaultPortModel,
 	DiagramWidget,
-	DefaultPortFactory,
-	LinkFactory,
-	SimplePortFactory
 } from "storm-react-diagrams";
 
 import {StepNodeModel,StepNodeFactory} from 'core/StepNode';
 import {MessageNodeModel,MessageNodeFactory} from 'core/MessageNode';
 
-import shortid from 'shortid';
 import _ from 'lodash';
 
 class NakaraGraph extends Component {
-
-	constructor(props) {
-		super(props);
-
-	}
 
 	render() {
 		return <DiagramWidget diagramEngine={this.props.engine} />
@@ -82,9 +68,8 @@ class Editor extends Component {
 	}
 
 	updateSelected(event) {
-		console.log(event);
-
-		this.state.selected.name = event.target.value;
+		let selected = this.state.selected;
+		selected.name = event.target.value;
 
 		this.forceUpdate();
 	}
