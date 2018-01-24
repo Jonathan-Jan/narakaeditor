@@ -7,31 +7,27 @@ import shortid from 'shortid';
 const PortWidget = SRD.PortWidget ;
 const DefaultPortLabel = SRD.DefaultPortLabel;
 
-export class StepNodeModel extends SRD.NodeModel {
-	constructor(color) {
-		super("stepnode");
+export class MessageNodeModel extends SRD.NodeModel {
+	constructor() {
+		super("messagenode");
 
-		this.addPort(new SRD.DefaultPortModel(false, "out-1", "S"));
+        this.addPort(new SRD.DefaultPortModel(false, "out-1", "S"));
 		this.addPort(new SRD.DefaultPortModel(true, "in-1", "E"));
 
-		this.name = shortid.generate();
-        this.messages = [{text:'Lundi, 01h30'},
-            {text:'Votre téléphone vibre...'},];
-		this.color = color;
+        this.message = {text:'Je suis en pleine partie.'};
+		this.name = this.message.text;
 	}
 
 	deSerialize(object) {
 		super.deSerialize(object);
 		this.name = object.name;
-		this.messages = object.messages;
-		this.color = object.color;
+		this.message = object.message;
 	}
 
 	serialize() {
 		return _.merge(super.serialize(), {
 			name: this.name,
-			messages: this.messages,
-			color: this.color
+			message: this.message
 		});
 	}
 
@@ -48,24 +44,24 @@ export class StepNodeModel extends SRD.NodeModel {
 	}
 }
 
-export class StepNodeFactory extends SRD.NodeFactory {
+export class MessageNodeFactory extends SRD.NodeFactory {
 	constructor() {
-		super("stepnode");
+		super("messagenode");
 	}
 
 	generateReactWidget(diagramEngine, node) {
-		return StepNodeWidgetFactory({ node: node });
+		return MessageNodeWidgetFactory({ node: node });
 	}
 
 	getNewInstance() {
-		return new StepNodeModel();
+		return new MessageNodeModel();
 	}
 }
 
 /**
  * @author Dylan Vorster
  */
-export class StepNodeWidget extends React.Component {
+export class MessageNodeWidget extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
@@ -75,14 +71,10 @@ export class StepNodeWidget extends React.Component {
 		return <DefaultPortLabel model={port} key={port.id} />;
 	}
 
-	generateMessage(message) {
-		return <div key={shortid.generate()}className="message">{message.text}</div>
-	}
-
 	render() {
 		return (
-			<div className="basic-node" style={{ background: this.props.node.color }}>
-				<div style={{backgroundColor: 'black'}}>Etape</div>
+			<div className="basic-node" style={{ background: "rgb(119, 242, 45)" }}>
+				<div style={{backgroundColor: 'black'}}>Message</div>
 				<div className="title">
 					<div className="name">{this.props.node.name}</div>
 				</div>
@@ -90,10 +82,9 @@ export class StepNodeWidget extends React.Component {
 					<div className="in">{_.map(this.props.node.getInPorts(), this.generatePort.bind(this))}</div>
 					<div className="out">{_.map(this.props.node.getOutPorts(), this.generatePort.bind(this))}</div>
 				</div>
-				<div>{_.map(this.props.node.messages, this.generateMessage.bind(this))}</div>
 			</div>
 		);
 	}
 }
 
-const StepNodeWidgetFactory = React.createFactory(StepNodeWidget);
+const MessageNodeWidgetFactory = React.createFactory(MessageNodeWidget);

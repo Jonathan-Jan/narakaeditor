@@ -14,6 +14,7 @@ import {
 } from "storm-react-diagrams";
 
 import {StepNodeModel,StepNodeFactory} from 'core/StepNode';
+import {MessageNodeModel,MessageNodeFactory} from 'core/MessageNode';
 
 import shortid from 'shortid';
 import _ from 'lodash';
@@ -39,6 +40,7 @@ class Editor extends Component {
 		let engine = new DiagramEngine();
 		engine.installDefaultFactories();
 		engine.registerNodeFactory(new StepNodeFactory());
+		engine.registerNodeFactory(new MessageNodeFactory());
 
 		//2) setup the diagram model
 		let model = new DiagramModel();
@@ -87,11 +89,21 @@ class Editor extends Component {
 		this.forceUpdate();
 	}
 
-	addNode(isStep) {
+	addStepNode(isStep) {
 		// var node = new DefaultNodeModel("Node 1", isStep ? "rgb(0,192,255)" : "rgb(192,255,0)");
-		var node = new StepNodeModel(isStep ? "rgb(0,192,255)" : "rgb(119, 242, 45)");
-		var port1 = node.addPort(new DefaultPortModel(false, "out-1", "S"));
-		var port2 = node.addPort(new DefaultPortModel(true, "in-1", "E"));
+		var node = new StepNodeModel("rgb(0,192,255)");
+		node.x = 50;
+		node.y = 50;
+
+		let model = this.state.model;
+		model.addNode(node);
+
+		this.forceUpdate();
+	}
+
+	addMessageNode() {
+		// var node = new DefaultNodeModel("Node 1", isStep ? "rgb(0,192,255)" : "rgb(192,255,0)");
+		var node = new MessageNodeModel();
 		node.x = 50;
 		node.y = 50;
 
@@ -121,8 +133,8 @@ class Editor extends Component {
 		return (
 			<div style={{height:'100%'}}>
 				<header>
-					<button onClick={() => this.addNode(true)}>Ajouter Etape</button>
-					<button onClick={() => this.addNode(false)}>Ajouter Réponse</button>
+					<button onClick={() => this.addStepNode(true)}>Ajouter Etape</button>
+					<button onClick={() => this.addMessageNode(false)}>Ajouter Réponse</button>
 					<button onClick={() => this.serialize()}>Serialize</button>
 					<button onClick={() => this.parse(window.prompt("DATA : "))}>Parse</button>
 					{this.state.selected && <input value={this.state.selected.name} onChange={(e) => this.updateSelected(e)}/>}
