@@ -7,15 +7,15 @@ import shortid from 'shortid';
 const DefaultPortLabel = SRD.DefaultPortLabel;
 
 export class StepNodeModel extends SRD.NodeModel {
-	constructor(color) {
+	constructor(mode,title,color) {
 		super("stepnode");
 
 		this.addPort(new SRD.DefaultPortModel(false, "out-1", "S"));
 		this.addPort(new SRD.DefaultPortModel(true, "in-1", "E"));
 
-		this.name = shortid.generate();
-        this.messages = [{text:'Lundi, 01h30'},
-            {text:'Votre téléphone vibre...'},];
+		this.mode = mode;
+		this.title = title;
+        this.messages = [];
 		this.color = color;
 	}
 
@@ -80,10 +80,11 @@ export class StepNodeWidget extends React.Component {
 
 	render() {
 		return (
-			<div className="basic-node" style={{ background: this.props.node.color }}>
+			<div className="basic-node stepnode" style={{ background: this.props.node.color }}>
 				<div style={{backgroundColor: 'black'}}>Etape</div>
 				<div className="title">
-					<div className="name">{this.props.node.name}</div>
+					<div className="name">title : {this.props.node.title}</div>
+					<div className="name">mode : {this.props.node.mode}</div>
 				</div>
 				<div className="ports">
 					<div className="in">{_.map(this.props.node.getInPorts(), this.generatePort.bind(this))}</div>
