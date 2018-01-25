@@ -234,8 +234,8 @@ class Editor extends Component {
 					<input value={this.state.defaultTitle} onChange={(e) => this.setState({defaultTitle:e.target.value})}/>
 					<button onClick={() => this.setState({onEditMetadata:true})}>Metadata</button>
 
-					{this.state.selected && this.state.selected.type === 'stepnode' && <button onClick={() => this.setState({onEditStep:true})}>Editer</button>}
-					{this.state.selected && this.state.selected.type === 'answernode'&& <button onClick={() => this.setState({onEditAnswer:true})}>Editer</button>}
+					{this.state.selected && this.state.selected.type === 'stepnode' && <button onClick={() => this.setState({onEditStep:true})}>Editer (CTRL+E)</button>}
+					{this.state.selected && this.state.selected.type === 'answernode'&& <button onClick={() => this.setState({onEditAnswer:true})}>Editer (CTRL+E)</button>}
 				</header>
 				<NakaraGraph engine={this.state.engine} model={this.state.model} {...graphProps}/>
 
