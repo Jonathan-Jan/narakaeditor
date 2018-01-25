@@ -13,15 +13,54 @@ import {AnswerNodeModel,AnswerNodeFactory} from 'core/AnswerNode';
 
 import EditStepDialog from 'components/EditStepDialog';
 import EditAnswerDialog from 'components/EditAnswerDialog';
+import TrayItemWidget from 'components/TrayItemWidget';
 
+import narakaBuilder from 'core/narakaBuilder';
 import modelSerialized from 'savedmodel/model.json';
+
+import 'Editor.css';
 
 let doubleClickSelectTimer = 0;
 
 class NakaraGraph extends Component {
 
 	render() {
-		return <DiagramWidget diagramEngine={this.props.engine} maxNumberPointsPerLink='0' deleteKeys={[46]}/>
+		return (
+			<div style={{height:'100%'}}
+				onDrop={event => {
+							var data = JSON.parse(event.dataTransfer.getData("storm-diagram-node"));
+							var nodesCount = _.keys(
+								this.props.engine
+									.getDiagramModel()
+									.getNodes()
+							).length;
+
+							var node = null;
+							if (data.type === "stepnode") {
+								node = new StepNodeModel("sms",this.props.defaultTitle,false);
+							} else if (data.type === "answernode") {
+								node = new AnswerNodeModel();
+							}
+
+							node.addListener({
+								selectionChanged: this.props.onSelect,
+								entityRemoved: this.props.onRemove,
+							});
+
+							var points = this.props.engine.getRelativeMousePoint(event);
+							node.x = points.x;
+							node.y = points.y;
+							this.props.engine
+								.getDiagramModel()
+								.addNode(node);
+							this.forceUpdate();
+						}}
+						onDragOver={event => {
+							event.preventDefault();
+						}}>
+				<DiagramWidget diagramEngine={this.props.engine} maxNumberPointsPerLink='0' deleteKeys={[46]}/>
+			</div>
+		)
 	}
 }
 
@@ -38,7 +77,9 @@ class Editor extends Component {
 
 		//2) setup the diagram model
 		let model = new DiagramModel();
-		model.deSerializeDiagram(modelSerialized, engine);
+		if (modelSerialized.id) {
+			model.deSerializeDiagram(modelSerialized, engine);
+		}
 
 		//3) load model into engine
 		engine.setDiagramModel(model);
@@ -106,6 +147,7 @@ class Editor extends Component {
 		selected.mode = newStep.mode;
 		selected.title = newStep.title;
 		selected.clearMsg = newStep.clearMsg;
+		selected.autoNextDelay = newStep.autoNextDelay;
 		selected.messages = newStep.messages;
 
 		this.setState({onEditStep:false});
@@ -119,33 +161,15 @@ class Editor extends Component {
 		this.setState({onEditAnswer:false});
 	}
 
-	addStepNode(isStep) {
-		// var node = new DefaultNodeModel("Node 1", isStep ? "rgb(0,192,255)" : "rgb(192,255,0)");
-		var node = new StepNodeModel("sms",this.state.defaultTitle,false,"rgb(0,192,255)");
-		node.x = 50;
-		node.y = 50;
-
-		let model = this.state.model;
-		model.addNode(node);
-
-		this.forceUpdate();
-	}
-
-	addAnswerNode() {
-		// var node = new DefaultNodeModel("Node 1", isStep ? "rgb(0,192,255)" : "rgb(192,255,0)");
-		var node = new AnswerNodeModel();
-		node.x = 50;
-		node.y = 50;
-
-		let model = this.state.model;
-		model.addNode(node);
-
-		this.forceUpdate();
-	}
-
 	serialize() {
 		var str = JSON.stringify(this.state.model.serializeDiagram());
 		copy(str);
+	}
+
+	buildNaraka() {
+		let model = this.state.engine.getDiagramModel();
+		const narakaModel = narakaBuilder(model);
+		copy(JSON.stringify(narakaModel));
 	}
 
 	parse(serialized) {
@@ -160,19 +184,27 @@ class Editor extends Component {
 	}
 
 	render() {
+
+		const props = {
+			defaultTitle: this.state.defaultTitle,
+
+			onSelect: this.onSelect.bind(this),
+			onRemove: this.onRemove.bind(this),
+		};
+
 		return (
 			<div style={{height:'100%'}}>
-				<header>
-					<button onClick={() => this.addStepNode(true)}>Ajouter Etape</button>
-					<button onClick={() => this.addAnswerNode(false)}>Ajouter Réponse</button>
+				<header className="flex-row menu">
+					<TrayItemWidget model={{ type: "stepnode" }} name="Ajouter Etape" />
+					<TrayItemWidget model={{ type: "answernode" }} name="Ajouter réponse" />
 					<button onClick={() => this.serialize()}>Serialize to clipboard</button>
-					<button style={{display:'none'}} onClick={() => this.parse(window.prompt("DATA : "))}>Parse</button>
+					<button onClick={() => this.buildNaraka()}>build Naraka</button>
 					<input value={this.state.defaultTitle} onChange={(e) => this.setState({defaultTitle:e.target.value})}/>
 
 					{this.state.selected && this.state.selected.type === 'stepnode' && <button onClick={() => this.setState({onEditStep:true})}>Editer</button>}
 					{this.state.selected && this.state.selected.type === 'answernode'&& <button onClick={() => this.setState({onEditAnswer:true})}>Editer</button>}
 				</header>
-				<NakaraGraph engine={this.state.engine} model={this.state.model}/>
+				<NakaraGraph engine={this.state.engine} model={this.state.model} {...props}/>
 
 				{this.state.selected && this.state.selected.type === 'stepnode' && <EditStepDialog open={this.state.onEditStep} node={this.state.selected} onClose={(newStep) => this.onCloseEditorStep(newStep)}/>}
 				{this.state.selected && this.state.selected.type === 'answernode' && <EditAnswerDialog open={this.state.onEditAnswer} node={this.state.selected} onClose={(newStep) => this.onCloseEditorAnswer(newStep)}/>}

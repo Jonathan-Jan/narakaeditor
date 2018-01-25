@@ -9,8 +9,8 @@ export class AnswerNodeModel extends SRD.NodeModel {
 	constructor() {
 		super("answernode");
 
-        this.addPort(new SRD.DefaultPortModel(false, "out-1", "S"));
-		this.addPort(new SRD.DefaultPortModel(true, "in-1", "E"));
+		this.addPort(new SRD.DefaultPortModel(true, "in", "E"));
+        this.addPort(new SRD.DefaultPortModel(false, "out", "S"));
 
 		this.text = '';
 	}
@@ -36,6 +36,31 @@ export class AnswerNodeModel extends SRD.NodeModel {
 		return _.filter(this.ports, (p) => {
 			if (!p.in) return p;
 		});
+	}
+
+	/**
+	 * Toujours faux pour un noeud de réponse
+	 * @return {Boolean} [description]
+	 */
+	isStartStep() {
+		return false;
+	}
+
+	/**
+	 * retourne le noeud suivant
+	 * @return {[type]} [description]
+	 */
+	getNextNode() {
+		 //model.getNodes() => node.ports.links.targetPort.parentNode
+		 const links = _.values(this.ports['out'].links);
+
+		 const nodes = links.map((link) => {
+			 return link.targetPort.parentNode
+		 });
+
+		 if (nodes.length > 1) console.warn(`Noeud message avec plusieurs destination. Seul la première est prise en compte ${JSON.stringify({text:this.text,from:this.from})}`);
+
+		 return nodes[0];
 	}
 }
 
@@ -68,7 +93,7 @@ export class AnswerNodeWidget extends React.Component {
 
 	render() {
 		return (
-			<div className="basic-node answernode" style={{ background: "rgb(119, 242, 45)" }}>
+			<div className="basic-node answernode">
 				<div className="header" style={{backgroundColor: 'black'}}>Answer</div>
 				<div className="title">
 					<div className="name">{this.props.node.text}</div>

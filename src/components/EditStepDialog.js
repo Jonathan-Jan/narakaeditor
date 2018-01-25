@@ -100,6 +100,8 @@ class EditStepDialog extends Component {
                           onCheck={this.updateClearMsg.bind(this)}
                           style={styles.checkbox}/>
 
+                      <TextField style={styles.it} value={this.state.autoNextDelay} onChange={(e) => this.setState({autoNextDelay:e.target.value})} hintText="autoNextDelay"/>
+
                       <span className="message-title">Answers</span>
                       <FlatButton label="Ajouter un message" onClick={() => this.addMsg()}/>
                       <div style={styles.flexC} className="">

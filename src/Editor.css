@@ -1,0 +1,33 @@
+.stepnode .title {
+    flex-direction: column;
+}
+
+.basic-node .header {
+    display: none;
+}
+
+.basic-node .title .name {
+    padding: 2px 5px !important;;
+}
+
+.storm-diagrams-canvas .basic-node .title > * {
+    align-self: auto !important;
+}
+
+.answernode {
+    background: rgb(115, 98, 147) none repeat scroll 0% 0% !important
+}
+
+.stepnode {
+    background: rgb(0,192,255) none repeat scroll 0% 0% !important;
+}
+
+.storm-diagrams-canvas {
+    width: 1000vw;
+    height: 1000vh;
+}
+
+.menu {
+    position: fixed;
+    z-index: 9999;
+}
