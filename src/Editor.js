@@ -101,6 +101,13 @@ class Editor extends Component {
 		}
 
 		this.addListenerToNode();
+
+		window.addEventListener('keydown', (e) => {
+			if (e.ctrlKey && e.code === 'KeyE') {
+				this.onCtrlE();
+				e.preventDefault();
+			}
+		}, true);
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -139,6 +146,14 @@ class Editor extends Component {
 			// newState = _.assign(newState, selected.type === 'stepnode' ? {onEditStep:true} : {onEditAnswer:true})
 		}
 
+		this.setState(newState);
+	}
+
+	onCtrlE() {
+		const selected = this.state.selected;
+		if (!selected) return;
+
+		let newState = selected.type === 'stepnode' ? {onEditStep:true} : {onEditAnswer:true};
 		this.setState(newState);
 	}
 
