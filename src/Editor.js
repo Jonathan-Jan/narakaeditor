@@ -13,6 +13,7 @@ import {AnswerNodeModel,AnswerNodeFactory} from 'core/AnswerNode';
 
 import EditStepDialog from 'components/EditStepDialog';
 import EditAnswerDialog from 'components/EditAnswerDialog';
+import MetadataDialog from 'components/MetadataDialog';
 import TrayItemWidget from 'components/TrayItemWidget';
 
 import narakaBuilder from 'core/narakaBuilder';
@@ -77,7 +78,9 @@ class Editor extends Component {
 
 		//2) setup the diagram model
 		let model = new DiagramModel();
+		let metadata = {people:[]};
 		if (modelSerialized.id) {
+			metadata = modelSerialized._metadata || metadata;
 			model.deSerializeDiagram(modelSerialized, engine);
 		}
 
@@ -88,8 +91,11 @@ class Editor extends Component {
 			engine:engine,
 			model:model,
 
+			metadata:metadata,
+
 			onEditStep:false,
 			onEditAnswer:false,
+			onEditMetadata:false,
 
 			selected:undefined
 		}
@@ -161,14 +167,20 @@ class Editor extends Component {
 		this.setState({onEditAnswer:false});
 	}
 
+	onCloseEditorMetadata(newMetadata) {
+		this.setState({onEditMetadata:false});
+	}
+
 	serialize() {
-		var str = JSON.stringify(this.state.model.serializeDiagram());
+		let serialized = this.state.model.serializeDiagram();
+		serialized._metadata = this.state.metadata;
+		var str = JSON.stringify(serialized);
 		copy(str);
 	}
 
 	buildNaraka() {
 		let model = this.state.engine.getDiagramModel();
-		const narakaModel = narakaBuilder(model);
+		const narakaModel = narakaBuilder(model,this.state.metadata);
 		copy(JSON.stringify(narakaModel));
 	}
 
@@ -185,12 +197,17 @@ class Editor extends Component {
 
 	render() {
 
-		const props = {
+		const graphProps = {
 			defaultTitle: this.state.defaultTitle,
 
 			onSelect: this.onSelect.bind(this),
 			onRemove: this.onRemove.bind(this),
 		};
+
+		const metadataDialogProps = {
+			metadata: this.state.metadata,
+			onClose:this.onCloseEditorMetadata.bind(this)
+		}
 
 		return (
 			<div style={{height:'100%'}}>
@@ -200,14 +217,17 @@ class Editor extends Component {
 					<button onClick={() => this.serialize()}>Serialize to clipboard</button>
 					<button onClick={() => this.buildNaraka()}>build Naraka</button>
 					<input value={this.state.defaultTitle} onChange={(e) => this.setState({defaultTitle:e.target.value})}/>
+					<button onClick={() => this.setState({onEditMetadata:true})}>Metadata</button>
 
 					{this.state.selected && this.state.selected.type === 'stepnode' && <button onClick={() => this.setState({onEditStep:true})}>Editer</button>}
 					{this.state.selected && this.state.selected.type === 'answernode'&& <button onClick={() => this.setState({onEditAnswer:true})}>Editer</button>}
 				</header>
-				<NakaraGraph engine={this.state.engine} model={this.state.model} {...props}/>
+				<NakaraGraph engine={this.state.engine} model={this.state.model} {...graphProps}/>
 
 				{this.state.selected && this.state.selected.type === 'stepnode' && <EditStepDialog open={this.state.onEditStep} node={this.state.selected} onClose={(newStep) => this.onCloseEditorStep(newStep)}/>}
 				{this.state.selected && this.state.selected.type === 'answernode' && <EditAnswerDialog open={this.state.onEditAnswer} node={this.state.selected} onClose={(newStep) => this.onCloseEditorAnswer(newStep)}/>}
+
+				<MetadataDialog open={this.state.onEditMetadata} {...metadataDialogProps}/>
 			</div>
 		);
 	}

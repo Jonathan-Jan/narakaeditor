@@ -1,10 +1,8 @@
 import _ from 'lodash';
 
-export default function(model) {
+export default function(model,metadata) {
     let naraka = {
-        _metadata:{
-            people: {}
-        },
+        _metadata:metadata
     };
 
     _.values(model.getNodes()).forEach((node) => {
