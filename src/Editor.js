@@ -16,7 +16,7 @@ import EditMessageDialog from 'components/EditMessageDialog';
 class NakaraGraph extends Component {
 
 	render() {
-		return <DiagramWidget diagramEngine={this.props.engine} />
+		return <DiagramWidget diagramEngine={this.props.engine} maxNumberPointsPerLink='0'/>
 	}
 }
 
@@ -56,7 +56,7 @@ class Editor extends Component {
 		nodes.forEach(node => {
 			node.clearListeners();
 			node.addListener({
-				selectionChanged: (event) => {this.onSelect(event)}
+				selectionChanged: this.onSelect.bind(this)
 			});
 		});
 	}
@@ -70,7 +70,13 @@ class Editor extends Component {
 
 		const selected = event.entity;
 		const selectedName = event.entity.name;
-		this.setState({selected,selectedName});
+		let newState = {selected,selectedName};
+		//on a double cliqué sur un élement => on lance l'édition
+		if (this.state.selected && selected.id === this.state.selected.id) {
+			newState = _.assign(newState, selected.type === 'stepnode' ? {onEditStep:true} : {onEditMessage:true})
+		}
+
+		this.setState(newState);
 	}
 
 	updateSelected(event) {
