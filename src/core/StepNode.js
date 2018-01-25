@@ -22,16 +22,20 @@ export class StepNodeModel extends SRD.NodeModel {
 
 	deSerialize(object) {
 		super.deSerialize(object);
-		this.name = object.name;
+		this.mode = object.mode;
+		this.title = object.title;
+		this.clearMsg = object.clearMsg;
 		this.messages = object.messages;
 		this.color = object.color;
 	}
 
 	serialize() {
 		return _.merge(super.serialize(), {
-			name: this.name,
+			mode: this.mode,
+			title: this.title,
+			clearMsg: this.clearMsg,
 			messages: this.messages,
-			color: this.color
+			color: this.color,
 		});
 	}
 
