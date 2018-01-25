@@ -11,16 +11,21 @@ export class MessageNodeModel extends SRD.NodeModel {
 
         this.addPort(new SRD.DefaultPortModel(false, "out-1", "S"));
 		this.addPort(new SRD.DefaultPortModel(true, "in-1", "E"));
+
+		this.text = '';
+		this.from = '';
 	}
 
 	deSerialize(object) {
 		super.deSerialize(object);
 		this.text = object.text;
+		this.from = object.from;
 	}
 
 	serialize() {
 		return _.merge(super.serialize(), {
-			text: this.text
+			text: this.text,
+			from: this.from,
 		});
 	}
 
@@ -66,10 +71,11 @@ export class MessageNodeWidget extends React.Component {
 
 	render() {
 		return (
-			<div className="basic-node" style={{ background: "rgb(119, 242, 45)" }}>
-				<div style={{backgroundColor: 'black'}}>Message</div>
+			<div className="basic-node messagenode" style={{ background: "rgb(119, 242, 45)" }}>
+				<div className="header" style={{backgroundColor: 'black'}}>Message</div>
 				<div className="title">
-					<div className="name">{this.props.node.text}</div>
+					<div className="name">from : {this.props.node.from}</div>
+					<div className="name">text : {this.props.node.text}</div>
 				</div>
 				<div className="ports">
 					<div className="in">{_.map(this.props.node.getInPorts(), this.generatePort.bind(this))}</div>

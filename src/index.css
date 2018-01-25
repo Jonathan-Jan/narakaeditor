@@ -16,3 +16,15 @@ html {
 .stepnode .title {
     flex-direction: column;
 }
+
+.basic-node .header {
+    display: none;
+}
+
+.basic-node .title .name {
+    padding: 2px 5px;
+}
+
+.storm-diagrams-canvas .basic-node .title > * {
+    align-self: auto;
+}

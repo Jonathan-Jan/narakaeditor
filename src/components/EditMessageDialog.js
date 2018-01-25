@@ -17,7 +17,8 @@ class EditMessageDialog extends Component {
     constructor(props){
         super(props);
         this.state = {
-            text:''
+            text:'',
+            from:''
         };
     }
 
@@ -25,9 +26,9 @@ class EditMessageDialog extends Component {
 
         if(!nextProps.node) return;
 
-        let {text} = nextProps.node;
+        let {text,from} = nextProps.node;
 
-        this.setState({text});
+        this.setState({text,from});
     }
 
     render() {
@@ -40,7 +41,8 @@ class EditMessageDialog extends Component {
                   onRequestClose={() => this.props.onClose(this.state)}>
 
                   <div style={styles.flexC}>
-                      <TextField style={styles.it} value={this.state.text} onChange={(e) => this.setState({text:e.target.value})} hintText="Text"/>
+                      <TextField style={styles.it} value={this.state.text} onChange={(e) => this.setState({text:e.target.value})} hintText="text"/>
+                      <TextField style={styles.it} value={this.state.from} onChange={(e) => this.setState({from:e.target.value})} hintText="from"/>
                   </div>
 
 

@@ -56,7 +56,8 @@ class Editor extends Component {
 		nodes.forEach(node => {
 			node.clearListeners();
 			node.addListener({
-				selectionChanged: this.onSelect.bind(this)
+				selectionChanged: this.onSelect.bind(this),
+				entityRemoved: this.onRemove.bind(this),
 			});
 		});
 	}
@@ -79,6 +80,12 @@ class Editor extends Component {
 		this.setState(newState);
 	}
 
+	onRemove(event) {
+		this.state.model.removeNode(event.entity);
+		this.forceUpdate();
+
+	}
+
 	updateSelected(event) {
 		let selected = this.state.selected;
 		selected.name = event.target.value;
@@ -99,6 +106,7 @@ class Editor extends Component {
 	onCloseEditorMessage(newMsg) {
 		let selected = this.state.selected;
 		selected.text = newMsg.text;
+		selected.from = newMsg.from;
 
 		this.setState({onEditMessage:false});
 	}

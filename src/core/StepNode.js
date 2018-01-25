@@ -50,6 +50,15 @@ export class StepNodeModel extends SRD.NodeModel {
 			if (!p.in) return p;
 		});
 	}
+
+	remove() {
+		super.remove();
+		for (var i in this.ports) {
+			_.forEach(this.ports[i].getLinks(), link => {
+				link.remove();
+			});
+		}
+	}
 }
 
 export class StepNodeFactory extends SRD.NodeFactory {
@@ -86,7 +95,7 @@ export class StepNodeWidget extends React.Component {
 	render() {
 		return (
 			<div className="basic-node stepnode" style={{ background: this.props.node.color }}>
-				<div style={{backgroundColor: 'black'}}>Etape</div>
+				<div className="header" style={{backgroundColor: 'black'}}>Etape</div>
 				<div className="title">
 					<div className="name">title : {this.props.node.title}</div>
 					<div className="name">mode : {this.props.node.mode}</div>
