@@ -86,13 +86,6 @@ class Editor extends Component {
 
 	}
 
-	updateSelected(event) {
-		let selected = this.state.selected;
-		selected.name = event.target.value;
-
-		this.forceUpdate();
-	}
-
 	onCloseEditorStep(newStep) {
 		let selected = this.state.selected;
 		selected.mode = newStep.mode;
