@@ -22,9 +22,9 @@ html {
 }
 
 .basic-node .title .name {
-    padding: 2px 5px;
+    padding: 2px 5px !important;;
 }
 
 .storm-diagrams-canvas .basic-node .title > * {
-    align-self: auto;
+    align-self: auto !important;
 }
