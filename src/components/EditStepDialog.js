@@ -4,6 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import Checkbox from 'material-ui/Checkbox';
 
 import TextField from 'material-ui/TextField';
 
@@ -60,6 +61,14 @@ class EditStepDialog extends Component {
 
     handleChangeMode = (event, index, mode) => this.setState({mode});
 
+    updateClearMsg() {
+        this.setState((oldState) => {
+            return {
+                clearMsg: !oldState.clearMsg,
+            };
+        });
+    }
+
     render() {
         return (
             <div>
@@ -80,6 +89,13 @@ class EditStepDialog extends Component {
                           <MenuItem value={'sms'} primaryText="sms" />
                         </SelectField>
 
+                      <TextField style={styles.it} value={this.state.title} onChange={(e) => this.setState({title:e.target.value})} hintText="Titre"/>
+
+                      <Checkbox
+                          label="clearMsg"
+                          checked={this.state.clearMsg}
+                          onCheck={this.updateClearMsg.bind(this)}
+                          style={styles.checkbox}/>
                       <TextField style={styles.it} value={this.state.title} onChange={(e) => this.setState({title:e.target.value})} hintText="Titre"/>
 
                       <span className="message-title">Messages</span>

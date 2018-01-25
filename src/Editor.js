@@ -90,6 +90,7 @@ class Editor extends Component {
 		let selected = this.state.selected;
 		selected.mode = newStep.mode;
 		selected.title = newStep.title;
+		selected.clearMsg = newStep.clearMsg;
 		selected.messages = newStep.messages;
 
 		this.setState({onEditStep:false});
@@ -104,7 +105,7 @@ class Editor extends Component {
 
 	addStepNode(isStep) {
 		// var node = new DefaultNodeModel("Node 1", isStep ? "rgb(0,192,255)" : "rgb(192,255,0)");
-		var node = new StepNodeModel("sms",this.state.defaultTitle,"rgb(0,192,255)");
+		var node = new StepNodeModel("sms",this.state.defaultTitle,false,"rgb(0,192,255)");
 		node.x = 50;
 		node.y = 50;
 
