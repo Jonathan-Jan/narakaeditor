@@ -18,7 +18,10 @@ class Message extends Component {
 
     render() {
         return (
-            <TextField style={styles.it} value={this.props.msg.text} onChange={(e) => this.props.onChange({text:e.target.value})} hintText="Message"/>
+            <div>
+                <TextField style={styles.it} value={this.props.msg.from} onChange={(e) => this.props.onChange({from:e.target.value})} hintText="from"/>
+                <TextField style={styles.it} value={this.props.msg.text} onChange={(e) => this.props.onChange({text:e.target.value})} hintText="text"/>
+            </div>
         );
     }
 

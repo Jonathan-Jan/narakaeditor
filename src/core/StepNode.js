@@ -89,7 +89,7 @@ export class StepNodeWidget extends React.Component {
 	}
 
 	generateMessage(message) {
-		return <div key={shortid.generate()}className="message">{message.text}</div>
+		return <div key={shortid.generate()}className="message">{message.from} : {message.text}</div>
 	}
 
 	render() {
