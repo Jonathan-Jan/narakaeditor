@@ -20,6 +20,7 @@
 
 .stepnode {
     background: rgb(0,192,255) none repeat scroll 0% 0% !important;
+    border-radius: 2px !important;
 }
 
 .storm-diagrams-canvas {

@@ -159,13 +159,25 @@ export class StepNodeWidget extends React.Component {
 		return <div key={shortid.generate()}className="message">{message.from} : {message.text}</div>
 	}
 
+	getBG(mode) {
+		switch (mode) {
+			case 'sms':
+				return '#ff2525';
+			case 'narator':
+				return 'blue';
+			default:
+				return 'white';
+		}
+		return 'blue';
+	}
+
 	render() {
 		return (
 			<div className="basic-node stepnode">
 				<div className="header" style={{backgroundColor: 'black'}}>Etape</div>
 				<div className="title">
+					<div className="name" style={{backgroundColor: this.getBG(this.props.node.mode)}}>mode : {this.props.node.mode}</div>
 					<div className="name">title : {this.props.node.title}</div>
-					<div className="name">mode : {this.props.node.mode}</div>
 					<div className="name">clearMsg : {this.props.node.clearMsg === true ? 'true' : "false"}</div>
 					<div className="name">autoNextDelay : {this.props.node.autoNextDelay}</div>
 				</div>
