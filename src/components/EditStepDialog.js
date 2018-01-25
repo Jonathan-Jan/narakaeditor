@@ -96,7 +96,6 @@ class EditStepDialog extends Component {
                           checked={this.state.clearMsg}
                           onCheck={this.updateClearMsg.bind(this)}
                           style={styles.checkbox}/>
-                      <TextField style={styles.it} value={this.state.title} onChange={(e) => this.setState({title:e.target.value})} hintText="Titre"/>
 
                       <span className="message-title">Messages</span>
                       <FlatButton label="Ajouter un message" onClick={() => this.addMsg()}/>
