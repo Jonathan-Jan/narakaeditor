@@ -6,12 +6,17 @@ import {
 } from "storm-react-diagrams";
 
 import _ from 'lodash';
+import copy from 'copy-to-clipboard';
 
 import {StepNodeModel,StepNodeFactory} from 'core/StepNode';
 import {MessageNodeModel,MessageNodeFactory} from 'core/MessageNode';
 
 import EditStepDialog from 'components/EditStepDialog';
 import EditMessageDialog from 'components/EditMessageDialog';
+
+import modelSerialized from 'savedmodel/model.json';
+
+let doubleClickSelectTimer = 0;
 
 class NakaraGraph extends Component {
 
@@ -33,6 +38,7 @@ class Editor extends Component {
 
 		//2) setup the diagram model
 		let model = new DiagramModel();
+		model.deSerializeDiagram(modelSerialized, engine);
 
 		//3) load model into engine
 		engine.setDiagramModel(model);
@@ -46,9 +52,15 @@ class Editor extends Component {
 
 			selected:undefined
 		}
+
+		this.addListenerToNode();
 	}
 
 	componentDidUpdate(prevProps, prevState) {
+		this.addListenerToNode();
+	}
+
+	addListenerToNode() {
 		let engine = this.state.engine;
 		let model = engine.getDiagramModel();
 		const nodes = _.values(model.getNodes());
@@ -69,11 +81,14 @@ class Editor extends Component {
 		}
 		console.log(event);
 
+		let diffDoubleClickSelectTimer = new Date().getTime() - doubleClickSelectTimer;
+		doubleClickSelectTimer = new Date().getTime();
+
 		const selected = event.entity;
 		const selectedName = event.entity.name;
 		let newState = {selected,selectedName};
 		//on a double cliqué sur un élement => on lance l'édition
-		if (this.state.selected && selected.id === this.state.selected.id) {
+		if (diffDoubleClickSelectTimer <= 1000 && this.state.selected && selected.id === this.state.selected.id) {
 			newState = _.assign(newState, selected.type === 'stepnode' ? {onEditStep:true} : {onEditMessage:true})
 		}
 
@@ -130,7 +145,7 @@ class Editor extends Component {
 
 	serialize() {
 		var str = JSON.stringify(this.state.model.serializeDiagram());
-		window.alert(str);
+		copy(str);
 	}
 
 	parse(serialized) {
@@ -150,8 +165,8 @@ class Editor extends Component {
 				<header>
 					<button onClick={() => this.addStepNode(true)}>Ajouter Etape</button>
 					<button onClick={() => this.addMessageNode(false)}>Ajouter Réponse</button>
-					<button onClick={() => this.serialize()}>Serialize</button>
-					<button onClick={() => this.parse(window.prompt("DATA : "))}>Parse</button>
+					<button onClick={() => this.serialize()}>Serialize to clipboard</button>
+					<button style={{display:'none'}} onClick={() => this.parse(window.prompt("DATA : "))}>Parse</button>
 					<input value={this.state.defaultTitle} onChange={(e) => this.setState({defaultTitle:e.target.value})}/>
 
 					{this.state.selected && this.state.selected.type === 'stepnode' && <button onClick={() => this.setState({onEditStep:true})}>Editer</button>}
