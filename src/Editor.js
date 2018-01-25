@@ -136,7 +136,7 @@ class Editor extends Component {
 		let newState = {selected,selectedName};
 		//on a double cliqué sur un élement => on lance l'édition
 		if (diffDoubleClickSelectTimer <= 1000 && this.state.selected && selected.id === this.state.selected.id) {
-			newState = _.assign(newState, selected.type === 'stepnode' ? {onEditStep:true} : {onEditAnswer:true})
+			// newState = _.assign(newState, selected.type === 'stepnode' ? {onEditStep:true} : {onEditAnswer:true})
 		}
 
 		this.setState(newState);
