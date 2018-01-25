@@ -88,7 +88,7 @@ export class StepNodeWidget extends React.Component {
 		return <DefaultPortLabel model={port} key={port.id} />;
 	}
 
-	generateMessage(message) {
+	generateAnswer(message) {
 		return <div key={shortid.generate()}className="message">{message.from} : {message.text}</div>
 	}
 
@@ -105,7 +105,7 @@ export class StepNodeWidget extends React.Component {
 					<div className="in">{_.map(this.props.node.getInPorts(), this.generatePort.bind(this))}</div>
 					<div className="out">{_.map(this.props.node.getOutPorts(), this.generatePort.bind(this))}</div>
 				</div>
-				<div>{_.map(this.props.node.messages, this.generateMessage.bind(this))}</div>
+				<div>{_.map(this.props.node.messages, this.generateAnswer.bind(this))}</div>
 			</div>
 		);
 	}

@@ -14,7 +14,7 @@ import shortid from 'shortid';
 import './EditStepDialog.css';
 
 
-class Message extends Component {
+class Answer extends Component {
 
     render() {
         return (
@@ -100,10 +100,10 @@ class EditStepDialog extends Component {
                           onCheck={this.updateClearMsg.bind(this)}
                           style={styles.checkbox}/>
 
-                      <span className="message-title">Messages</span>
+                      <span className="message-title">Answers</span>
                       <FlatButton label="Ajouter un message" onClick={() => this.addMsg()}/>
                       <div style={styles.flexC} className="">
-                          {_.map(this.state.messages, (msg) => {return <Message key={msg.key} msg={msg} onChange={(newData) => this.onChangeMsg(msg,newData)}/>})}
+                          {_.map(this.state.messages, (msg) => {return <Answer key={msg.key} msg={msg} onChange={(newData) => this.onChangeMsg(msg,newData)}/>})}
                       </div>
                   </div>
 

@@ -10,15 +10,14 @@ import TextField from 'material-ui/TextField';
 import _ from 'lodash';
 import shortid from 'shortid';
 
-import './EditMessageDialog.css';
+import './EditAnswerDialog.css';
 
-class EditMessageDialog extends Component {
+class EditAnswerDialog extends Component {
 
     constructor(props){
         super(props);
         this.state = {
             text:'',
-            from:''
         };
     }
 
@@ -26,9 +25,9 @@ class EditMessageDialog extends Component {
 
         if(!nextProps.node) return;
 
-        let {text,from} = nextProps.node;
+        let {text} = nextProps.node;
 
-        this.setState({text,from});
+        this.setState({text});
     }
 
     render() {
@@ -41,8 +40,7 @@ class EditMessageDialog extends Component {
                   onRequestClose={() => this.props.onClose(this.state)}>
 
                   <div style={styles.flexC}>
-                      <TextField style={styles.it} value={this.state.text} onChange={(e) => this.setState({text:e.target.value})} hintText="text"/>
-                      <TextField style={styles.it} value={this.state.from} onChange={(e) => this.setState({from:e.target.value})} hintText="from"/>
+                      <TextField style={styles.it} value={this.state.text} onChange={(e) => this.setState({text:e.target.value})} hintText="text" onKeyUp={() => console.log('upupup')}/>
                   </div>
 
 
@@ -62,4 +60,4 @@ const styles = {
     }
 }
 
-export default EditMessageDialog;
+export default EditAnswerDialog;

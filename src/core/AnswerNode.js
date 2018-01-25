@@ -5,9 +5,9 @@ import _ from 'lodash';
 
 const DefaultPortLabel = SRD.DefaultPortLabel;
 
-export class MessageNodeModel extends SRD.NodeModel {
+export class AnswerNodeModel extends SRD.NodeModel {
 	constructor() {
-		super("messagenode");
+		super("answernode");
 
         this.addPort(new SRD.DefaultPortModel(false, "out-1", "S"));
 		this.addPort(new SRD.DefaultPortModel(true, "in-1", "E"));
@@ -39,24 +39,24 @@ export class MessageNodeModel extends SRD.NodeModel {
 	}
 }
 
-export class MessageNodeFactory extends SRD.NodeFactory {
+export class AnswerNodeFactory extends SRD.NodeFactory {
 	constructor() {
-		super("messagenode");
+		super("answernode");
 	}
 
 	generateReactWidget(diagramEngine, node) {
-		return MessageNodeWidgetFactory({ node: node });
+		return AnswerNodeWidgetFactory({ node: node });
 	}
 
 	getNewInstance() {
-		return new MessageNodeModel();
+		return new AnswerNodeModel();
 	}
 }
 
 /**
  * @author Dylan Vorster
  */
-export class MessageNodeWidget extends React.Component {
+export class AnswerNodeWidget extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
@@ -68,8 +68,8 @@ export class MessageNodeWidget extends React.Component {
 
 	render() {
 		return (
-			<div className="basic-node messagenode" style={{ background: "rgb(119, 242, 45)" }}>
-				<div className="header" style={{backgroundColor: 'black'}}>Message</div>
+			<div className="basic-node answernode" style={{ background: "rgb(119, 242, 45)" }}>
+				<div className="header" style={{backgroundColor: 'black'}}>Answer</div>
 				<div className="title">
 					<div className="name">{this.props.node.text}</div>
 				</div>
@@ -82,4 +82,4 @@ export class MessageNodeWidget extends React.Component {
 	}
 }
 
-const MessageNodeWidgetFactory = React.createFactory(MessageNodeWidget);
+const AnswerNodeWidgetFactory = React.createFactory(AnswerNodeWidget);
