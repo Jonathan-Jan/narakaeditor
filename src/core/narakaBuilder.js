@@ -15,7 +15,7 @@ export default class NarakaBuilder {
         let _metadata = nM.metadata;
         //on ne conserve que les clef importante
         const toKeep = ['people'];
-        Object.keys(_metadata).map(key => {
+        Object.keys(_metadata).forEach(key => {
             if (toKeep.indexOf(key) < 0) {
                 delete _metadata[key];
             }
@@ -148,8 +148,7 @@ export default class NarakaBuilder {
         return nextNodes.map(node => {
 			//seul les noeuds answernode sont traités
 			if (node.type === 'stepnode' || node.type === 'nextchapternode') {
-				console.warn(`Le Noeud possède des noeuds suivant de type multiple : ${JSON.stringify(narakaStep)}`);
-				return;
+				throw new Error(`Le Noeud possède des noeuds suivant de type multiple : ${JSON.stringify(narakaStep)}`);
 			}
 
             let nextNodes = node.getNextNodes();

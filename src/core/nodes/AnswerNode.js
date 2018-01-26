@@ -1,11 +1,8 @@
-import * as SRD from "storm-react-diagrams";
 import React from 'react';
 
 import _ from 'lodash';
 
 import {NarakaNodeModel,NarakaNodeWidget,getFactory} from 'core/nodes/NarakaNode';
-
-const DefaultPortLabel = SRD.DefaultPortLabel;
 
 export class AnswerNodeModel extends NarakaNodeModel {
 	constructor() {
@@ -17,9 +14,6 @@ export class AnswerNodeModel extends NarakaNodeModel {
  * @author Dylan Vorster
  */
 export class AnswerNodeWidget extends NarakaNodeWidget {
-	constructor(props) {
-		super(props);
-	}
 
 	render() {
 		return (

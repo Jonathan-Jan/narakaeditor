@@ -15,7 +15,7 @@ export class NarakaNodeModel extends  SRD.NodeModel {
 
         this._keys = [];
 
-        Object.keys(params).map(key => {
+        Object.keys(params).forEach(key => {
             this._keys.push(key);
             this[key] = params[key];
         });
@@ -24,7 +24,7 @@ export class NarakaNodeModel extends  SRD.NodeModel {
     deSerialize(object) {
 		super.deSerialize(object);
 
-        this._keys.map(key => {
+        this._keys.forEach(key => {
             this[key] = object[key];
         });
 	}
@@ -32,7 +32,7 @@ export class NarakaNodeModel extends  SRD.NodeModel {
     serialize() {
 
         const serialized = {};
-        this._keys.map(key => {
+        this._keys.forEach(key => {
             serialized[key] = this[key];
         });
 

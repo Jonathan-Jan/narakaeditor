@@ -1,4 +1,3 @@
-import * as SRD from "storm-react-diagrams";
 import React from 'react';
 
 import _ from 'lodash';
@@ -24,10 +23,7 @@ export class StepNodeModel extends NarakaNodeModel {
  * @author Dylan Vorster
  */
 export class StepNodeWidget extends NarakaNodeWidget {
-	constructor(props) {
-		super(props);
-	}
-
+	
 	generateAnswer(message) {
 		return <div key={shortid.generate()}className="message">{message.from} : {message.text}</div>
 	}

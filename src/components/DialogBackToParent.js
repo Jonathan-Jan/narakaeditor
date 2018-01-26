@@ -1,13 +1,6 @@
 import React, { Component } from 'react';
 import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
 
-import TextField from 'material-ui/TextField';
-
-import _ from 'lodash';
 import shortid from 'shortid';
 
 class DialogBackToParent extends Component {

@@ -1,6 +1,5 @@
 import {
-	DiagramEngine,
-    DiagramModel
+	DiagramEngine
 } from "storm-react-diagrams";
 
 import {StepNodeFactory} from 'core/nodes/StepNode';

@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
 import {
-	DiagramEngine,
-	DiagramModel,
 	DiagramWidget,
 } from "storm-react-diagrams";
 
 import _ from 'lodash';
 import copy from 'copy-to-clipboard';
 
-import {StepNodeModel,StepNodeFactory} from 'core/nodes/StepNode';
-import {AnswerNodeModel,AnswerNodeFactory} from 'core/nodes/AnswerNode';
-import {NextChapterNodeModel,NextChapterNodeWidget} from 'core/nodes/NextChapterNode';
+import {StepNodeModel} from 'core/nodes/StepNode';
+import {AnswerNodeModel} from 'core/nodes/AnswerNode';
+import {NextChapterNodeModel} from 'core/nodes/NextChapterNode';
 
 import EditStepDialog from 'components/EditStepDialog';
 import EditAnswerDialog from 'components/EditAnswerDialog';
@@ -34,11 +32,6 @@ class NakaraGraph extends Component {
 			<div style={{height:'100%'}}
 				onDrop={event => {
 							var data = JSON.parse(event.dataTransfer.getData("storm-diagram-node"));
-							var nodesCount = _.keys(
-								this.props.engine
-									.getDiagramModel()
-									.getNodes()
-							).length;
 
 							var node = null;
 							if (data.type === "stepnode") {
