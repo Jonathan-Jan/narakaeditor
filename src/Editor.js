@@ -89,6 +89,8 @@ class Editor extends Component {
 			onEditAnswer:false,
 			onEditNextChapter:false,
 			onEditMetadata:false,
+
+			backToParentPreload:[],
 			backToParentOpen:false,
 
 			selected:undefined
@@ -195,7 +197,7 @@ class Editor extends Component {
 			return;
 		}
 
-		this.setState({backToParentOpen:true});
+		this.setState({backToParentOpen:true,backToParentPreload:chaptersParents});
 	}
 
 	onRemove(event) {
@@ -276,7 +278,7 @@ class Editor extends Component {
 
 		const dialogBackToParentProps = {
 			open:this.state.backToParentOpen,
-			chapters:this.state.backToParentOpen ? this.state.engine.getModel().getChapterParent() : [],
+			chapters:this.state.backToParentPreload,
 			onClose:() => {this.setState({backToParentOpen:false})},
 			loadChapter:(chapterId) => {this.state.engine.loadChapter(chapterId);this.forceUpdate();this.setState({backToParentOpen:false})}
 		}
