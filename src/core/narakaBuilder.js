@@ -9,7 +9,9 @@ export default class NarakaBuilder {
 
         const nM = this.narakaModel;
 
+        //-------------------------------------------------------------
         //récupération des metadatas
+        //-------------------------------------------------------------
         let _metadata = nM.metadata;
         //on ne conserve que les clef importante
         const toKeep = ['people'];
@@ -19,65 +21,85 @@ export default class NarakaBuilder {
             }
         });
 
-
         let naraka = {
             _metadata:_metadata
         };
 
+
+        //-------------------------------------------------------------
         //liste des chapitres pouvant être le premier
         //A la fin du build il n'en restera qu'un seul
         //On élimine les chapitres de cette liste lorsqu'un noeud de changement de chapitre y fait référence
+        //-------------------------------------------------------------
         let potentialStartChapter = _.values(nM.getChapters()); //on met tous les chapitres pour le moment
-        let chatperStartNode = {};
+        let chapterStartNode = {};
 
+
+        //-------------------------------------------------------------
+        // Première passe
+        // indexation des noeuds étapes
+        // indexation des noeuds de changement de chapitre
+        //-------------------------------------------------------------
         //On récupère l'ensemble des noeuds de type stepnode
         let allStepNodes = [];
         //On récupère aussi l'ensemble des noeurs de type nextchapternode
-        let allNextChapterNodes = [];
+        let allReferencedChapterId = [];
         //on parcours l'ensemble des chapitres...
         _.values(nM.getChapters()).forEach(chapter => {
             //on parcours l'ensemble des noeuds de chaque chapitre
             _.values(chapter.getNodes()).forEach(node => {
-                node.chapterId = chapter.id;
+                node._chapterId = chapter.id;
                 if (node.type === 'stepnode') allStepNodes.push(node);
-                if (node.type === 'nextchapternode') allNextChapterNodes.push(node);
+                if (node.type === 'nextchapternode') allReferencedChapterId.push(node.chapterId);
 
             });
         });
 
+
+        //-------------------------------------------------------------
+        // Deuxième passe
+        // indexation des noeuds de départ pour chaque chapitre
+        //-------------------------------------------------------------
+        allStepNodes.forEach(stepNode => {
+            //si il s'agit d'une étape de départ on la met de coté
+            if (stepNode.isStartStep()) {
+                chapterStartNode[stepNode._chapterId] = stepNode;
+            }
+        });
+
+
+
+        //-------------------------------------------------------------
+        // construction des étapes
+        //-------------------------------------------------------------
         //on parcours tous les stepnodes pour construire l'étape
         allStepNodes.forEach(stepNode => {
 
             //si il s'agit d'une étape de départ on la met de coté
             if (stepNode.isStartStep()) {
-                chatperStartNode[stepNode.chapterId] = stepNode;
+                chapterStartNode[stepNode._chapterId] = stepNode;
             }
-            naraka[stepNode.id] = this.buildStep(stepNode);
+
+            naraka[stepNode.id] = this.buildStep(stepNode, chapterStartNode);
         });
 
-        //on cherche l'étape de départ
-        //on commence par chercher le chapitre de départ
-        allNextChapterNodes.forEach(nextChapterNode => {
-            delete chatperStartNode[nextChapterNode.chapterId];
-        });
-        //si il reste plus d'un chapitre => probleme
-        if (Object.keys(chatperStartNode).length !== 1) console.warn(`Impossible de trouver le premier chapitre : ${JSON.stringify(potentialStartChapter.map(id => id))}`);
 
-
-        let startNode = _.values(chatperStartNode)[0];
+        //-------------------------------------------------------------
+        // on cherche l'étape de départ
+        // on commence par chercher le chapitre de départ
+        //-------------------------------------------------------------
+        let startChapterId;
+        for (let i = 0; i < potentialStartChapter.length; i++) {
+            //si un chapitre n'est referencé par aucun noeud de changement de chapitre : il s'agit du noeud de départ
+            if (allReferencedChapterId.indexOf(potentialStartChapter[i].id) < 0) {
+                startChapterId = potentialStartChapter[i].id;
+            }
+        }
+        //on a trouvé le noeud de départ
+        const startNode = chapterStartNode[startChapterId];
         naraka._metadata.start = startNode.id;
 
 
-        // _.values(model.getNodes()).forEach((node) => {
-        //
-        //     if (node.type === 'answernode') return;
-        //
-        //     if (node.isStartStep()) {
-        //         naraka._metadata.start = node.id;
-        //     }
-        //
-        //     naraka[node.id] = node.buildNaraka();
-        // });
 
         console.log(naraka);
 
@@ -86,9 +108,11 @@ export default class NarakaBuilder {
 
     /**
 	 * Construit un objet serializé correspondant à l'étape
+     * @param chapterStartNode : map chapitreId -> noeud de départ
 	 * @return {[type]} [description]
+     *
 	 */
-	buildStep(stepNode) {
+	buildStep(stepNode, chapterStartNode) {
 		//récup des info de base
 		const narakaStep = {
 			mode: stepNode.mode,
@@ -109,10 +133,21 @@ export default class NarakaBuilder {
 			return narakaStep;
 		}
 
+        if (nextNodes.length === 1 && nextNodes[0].type === 'nextchapternode') {
+            let nextChapter = nextNodes[0].chapterId;
+            narakaStep.destination = chapterStartNode[nextChapter].id;
+        }
+
 		//récupération des réponses possible
-		narakaStep.answers = nextNodes.map(node => {
+		narakaStep.answers = this.buildAnswers(narakaStep, nextNodes, chapterStartNode);
+
+		return narakaStep;
+	}
+
+    buildAnswers(narakaStep, nextNodes, chapterStartNode) {
+        return nextNodes.map(node => {
 			//seul les noeuds answernode sont traités
-			if (node.type === 'stepnode') {
+			if (node.type === 'stepnode' || node.type === 'nextchapternode') {
 				console.warn(`Le Noeud possède des noeuds suivant de type multiple : ${JSON.stringify(narakaStep)}`);
 				return;
 			}
@@ -120,14 +155,16 @@ export default class NarakaBuilder {
             let nextNodes = node.getNextNodes();
             if (nextNodes.length > 1) console.warn(`Noeud message avec plusieurs destination. Seul la première est prise en compte ${JSON.stringify({text:this.text,from:this.from})}`);
             let nextNode = nextNodes[0];
+            let id = nextNode ? nextNode.id : 'none';
+            if (nextNode && nextNode.type === 'nextchapternode') {
+                id = narakaStep.destination = chapterStartNode[nextNode.chapterId].id;
+            }
 
-			const answer =  {text:node.text,from:node.from,destination: nextNode ? nextNode.id : 'none'};
+			const answer =  {text:node.text,from:node.from,destination: id};
 
 			if (answer.destination === 'none') console.warn(`Réponse sans déstination : ${JSON.stringify(narakaStep)}`);
 
 			return answer;
 		});
-
-		return narakaStep;
-	}
+    }
 }
