@@ -14,6 +14,7 @@ import {NextChapterNodeModel,NextChapterNodeWidget} from 'core/nodes/NextChapter
 
 import EditStepDialog from 'components/EditStepDialog';
 import EditAnswerDialog from 'components/EditAnswerDialog';
+import EditNextChapterDialog from 'components/EditNextChapterDialog';
 import MetadataDialog from 'components/MetadataDialog';
 import TrayItemWidget from 'components/TrayItemWidget';
 
@@ -86,6 +87,7 @@ class Editor extends Component {
 
 			onEditStep:false,
 			onEditAnswer:false,
+			onEditNextChapter:false,
 			onEditMetadata:false,
 
 			selected:undefined
@@ -144,7 +146,17 @@ class Editor extends Component {
 		const selected = this.state.selected;
 		if (!selected) return;
 
-		let newState = selected.type === 'stepnode' ? {onEditStep:true} : {onEditAnswer:true};
+		let newState;
+		if (selected.type === "stepnode") {
+			newState = {onEditStep:true};
+		}
+		else if (selected.type === "answernode") {
+			newState = {onEditAnswer:true};
+		}
+		else if (selected.type === "nextchapternode") {
+			newState = {onEditNextChapter:true};
+		}
+
 		this.setState(newState);
 	}
 
@@ -175,6 +187,13 @@ class Editor extends Component {
 
 	onCloseEditorMetadata(newMetadata) {
 		this.setState({onEditMetadata:false});
+	}
+
+	onCloseEditorNextChapter(newNode) {
+		let selected = this.state.selected;
+		selected.chapterId = newNode.chapterId;
+
+		this.setState({onEditNextChapter:false});
 	}
 
 	serialize() {
@@ -240,11 +259,13 @@ class Editor extends Component {
 
 					{this.state.selected && this.state.selected.type === 'stepnode' && <button onClick={() => this.setState({onEditStep:true})}>Editer (CTRL+E)</button>}
 					{this.state.selected && this.state.selected.type === 'answernode'&& <button onClick={() => this.setState({onEditAnswer:true})}>Editer (CTRL+E)</button>}
+					{this.state.selected && this.state.selected.type === 'nextchapternode'&& <button onClick={() => this.setState({onEditNextChapter:true})}>Editer (CTRL+E)</button>}
 				</header>
 				<NakaraGraph engine={this.state.engine.getDiagramEngine()} {...graphProps}/>
 
 				{this.state.selected && this.state.selected.type === 'stepnode' && <EditStepDialog open={this.state.onEditStep} node={this.state.selected} onClose={(newStep) => this.onCloseEditorStep(newStep)}/>}
 				{this.state.selected && this.state.selected.type === 'answernode' && <EditAnswerDialog open={this.state.onEditAnswer} node={this.state.selected} onClose={(newStep) => this.onCloseEditorAnswer(newStep)}/>}
+				{this.state.selected && this.state.selected.type === 'nextchapternode' && <EditNextChapterDialog open={this.state.onEditNextChapter} node={this.state.selected} chapters={this.state.engine.getModel().getChapterIds()} onClose={(newStep) => this.onCloseEditorNextChapter(newStep)}/>}
 
 				<MetadataDialog open={this.state.onEditMetadata} {...metadataDialogProps}/>
 			</div>

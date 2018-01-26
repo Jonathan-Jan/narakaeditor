@@ -23,7 +23,7 @@ export class NextChapterNodeWidget extends NarakaNodeWidget {
 			<div className="basic-node nextchapternode">
 				<div className="header" style={{backgroundColor: 'black'}}>Answer</div>
 				<div className="title">
-					<div className="name">{this.props.node.chapterName}</div>
+					<div className="name">{this.props.node.chapterId}</div>
 				</div>
 				<div className="ports">
 					<div className="in">{_.map(this.props.node.getInPorts(), this.generatePort.bind(this))}</div>
