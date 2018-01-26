@@ -54,7 +54,7 @@ class EditStepDialog extends Component {
 
     addMsg() {
         let messages = this.state.messages;
-        messages.push({key:shortid.generate()});
+        messages.push({key:shortid.generate(),from:'',text:''});
         this.setState({messages});
     }
 
