@@ -199,17 +199,6 @@ class Editor extends Component {
 		copy(JSON.stringify(narakaModel));
 	}
 
-	parse(serialized) {
-		let engine = this.state.engine;
-
-		//deserialize the model
-		var model = new DiagramModel();
-		model.deSerializeDiagram(JSON.parse(serialized), engine);
-		engine.setDiagramModel(model);
-
-		this.setState({model,engine});
-	}
-
 	render() {
 
 		const graphProps = {
