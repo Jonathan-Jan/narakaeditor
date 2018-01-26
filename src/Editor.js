@@ -16,8 +16,10 @@ import EditAnswerDialog from 'components/EditAnswerDialog';
 import MetadataDialog from 'components/MetadataDialog';
 import TrayItemWidget from 'components/TrayItemWidget';
 
+import {getEngine} from 'core/NarakaEngine';
+
 import narakaBuilder from 'core/narakaBuilder';
-import modelSerialized from 'savedmodel/model.json';
+import modelSerialized from 'savedmodel/narakamodel.json';
 
 import 'Editor.css';
 
@@ -71,27 +73,11 @@ class Editor extends Component {
 		super(props);
 
 		//1) setup the diagram engine
-		let engine = new DiagramEngine();
-		engine.installDefaultFactories();
-		engine.registerNodeFactory(new StepNodeFactory());
-		engine.registerNodeFactory(new AnswerNodeFactory());
-
-		//2) setup the diagram model
-		let model = new DiagramModel();
-		let metadata = {people:[]};
-		if (modelSerialized.id) {
-			metadata = modelSerialized._metadata || metadata;
-			model.deSerializeDiagram(modelSerialized, engine);
-		}
-
-		//3) load model into engine
-		engine.setDiagramModel(model);
+		let engine = getEngine();
+		engine.getModel().deSerialize(modelSerialized);
 
 		this.state = {
 			engine:engine,
-			model:model,
-
-			metadata:metadata,
 
 			onEditStep:false,
 			onEditAnswer:false,
@@ -187,8 +173,9 @@ class Editor extends Component {
 	}
 
 	serialize() {
-		let serialized = this.state.model.serializeDiagram();
-		serialized._metadata = this.state.metadata;
+		// let serialized = this.state.model.serializeDiagram();
+		// serialized._metadata = this.state.metadata;
+		let serialized = this.state.engine.getModel().serialize();
 		var str = JSON.stringify(serialized);
 		copy(str);
 	}
@@ -197,6 +184,19 @@ class Editor extends Component {
 		let model = this.state.engine.getDiagramModel();
 		const narakaModel = narakaBuilder(model,this.state.metadata);
 		copy(JSON.stringify(narakaModel));
+	}
+
+	addChapter() {
+		this.state.engine.getModel().addChapter();
+		this.forceUpdate();
+	}
+	deleteChapter() {
+		this.state.engine.getModel().deleteChapter();
+		this.forceUpdate();
+	}
+	loadChapter(chapterId) {
+		this.state.engine.loadChapter(chapterId);
+		this.forceUpdate();
 	}
 
 	render() {
@@ -209,7 +209,7 @@ class Editor extends Component {
 		};
 
 		const metadataDialogProps = {
-			metadata: this.state.metadata,
+			metadata: this.state.engine.getModel().getMetadata(),
 			onClose:this.onCloseEditorMetadata.bind(this)
 		}
 
@@ -218,15 +218,25 @@ class Editor extends Component {
 				<header className="flex-row menu">
 					<TrayItemWidget model={{ type: "stepnode" }} name="Ajouter Etape" />
 					<TrayItemWidget model={{ type: "answernode" }} name="Ajouter réponse" />
-					<button onClick={() => this.serialize()}>Serialize to clipboard</button>
-					<button onClick={() => this.buildNaraka()}>build Naraka</button>
 					<input value={this.state.defaultTitle} onChange={(e) => this.setState({defaultTitle:e.target.value})}/>
 					<button onClick={() => this.setState({onEditMetadata:true})}>Metadata</button>
+
+					<select>
+						<option onClick={()=>this.loadChapter()} value='firstChapter'>firstChapter</option>
+						{this.state.engine.getModel().getChapterIds().map(id => <option key={id} onClick={()=>this.loadChapter(id)} value={id}>{id}</option>)}
+					</select>
+					<button onClick={() => this.addChapter()}>new chapters</button>
+					<button onClick={() => this.deleteChapter()}>delete chapters</button>
+
+					<div className="flex1"></div>
+
+					<button onClick={() => this.serialize()}>Serialize to clipboard</button>
+					<button onClick={() => this.buildNaraka()}>build Naraka</button>
 
 					{this.state.selected && this.state.selected.type === 'stepnode' && <button onClick={() => this.setState({onEditStep:true})}>Editer (CTRL+E)</button>}
 					{this.state.selected && this.state.selected.type === 'answernode'&& <button onClick={() => this.setState({onEditAnswer:true})}>Editer (CTRL+E)</button>}
 				</header>
-				<NakaraGraph engine={this.state.engine} model={this.state.model} {...graphProps}/>
+				<NakaraGraph engine={this.state.engine.getDiagramEngine()} {...graphProps}/>
 
 				{this.state.selected && this.state.selected.type === 'stepnode' && <EditStepDialog open={this.state.onEditStep} node={this.state.selected} onClose={(newStep) => this.onCloseEditorStep(newStep)}/>}
 				{this.state.selected && this.state.selected.type === 'answernode' && <EditAnswerDialog open={this.state.onEditAnswer} node={this.state.selected} onClose={(newStep) => this.onCloseEditorAnswer(newStep)}/>}
