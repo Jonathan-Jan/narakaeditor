@@ -102,4 +102,37 @@ export class NarakaModel {
     build() {
         return new NarakaBuilder(this).build();
     }
+
+    /**
+     * Execution de la fonction en parametre pour chaque noeuds
+     * @param  {Function} callback [description]
+     * @return {[type]}            [description]
+     */
+    forEachNode(callback) {
+        _.values(this.getChapters()).forEach(chapter => {
+            //parcours de l'ensemble des noeuds de chaque chapitre
+            _.values(chapter.getNodes()).forEach(node => {
+                callback(chapter,node);
+            });
+        });
+    }
+
+    /**
+     * Permet de récuperer une liste des id des chapitre ayant un noeud menant au chapitre en cours
+     * @return {[type]} [description]
+     */
+    getChapterParent() {
+        let ref = [];
+        //parcours des chapitres
+        this.forEachNode((chapter,node) => {
+            node._chapterId = chapter.id;
+            if (node.type === 'nextchapternode') {
+                if (this.current === node.chapterId) {
+                    ref.push(chapter.id);
+                }
+            }
+        });
+
+        return ref;
+    }
 }

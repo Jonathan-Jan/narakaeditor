@@ -106,6 +106,12 @@ class Editor extends Component {
 				e.preventDefault();
 			}
 		}, true);
+		window.addEventListener('keydown', (e) => {
+			if (e.ctrlKey && e.code === 'KeyB') {
+				this.followBackToChapterParent();
+				e.preventDefault();
+			}
+		}, true);
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -172,6 +178,19 @@ class Editor extends Component {
 
 		this.state.engine.loadChapter(selected.chapterId);
 		this.forceUpdate();
+	}
+
+	followBackToChapterParent() {
+		const chaptersParents = this.state.engine.getModel().getChapterParent();
+		if(chaptersParents.length === 0) return;
+
+		if(chaptersParents.length === 1) {
+			this.state.engine.loadChapter(chaptersParents[0]);
+			this.forceUpdate();
+			return;
+		}
+
+		window.alert(JSON.stringify(chaptersParents));
 	}
 
 	onRemove(event) {
@@ -276,6 +295,7 @@ class Editor extends Component {
 					{this.state.selected && this.state.selected.type === 'nextchapternode'&& <button onClick={() => this.setState({onEditNextChapter:true})}>Editer (CTRL+E)</button>}
 
 					{this.state.selected && this.state.selected.type === 'nextchapternode'&& <button onClick={() => this.followToChapter()}>Aller au chapitre (CTRL+C)</button>}
+					<button onClick={() => this.followBackToChapterParent()}>Retour chapitre parent (CTRL+B)</button>
 
 				</header>
 				<NakaraGraph engine={this.state.engine.getDiagramEngine()} {...graphProps}/>
