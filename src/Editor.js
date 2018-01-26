@@ -20,7 +20,6 @@ import TrayItemWidget from 'components/TrayItemWidget';
 
 import {getEngine} from 'core/NarakaEngine';
 
-import narakaBuilder from 'core/narakaBuilder';
 import modelSerialized from 'savedmodel/narakamodel.json';
 
 import 'Editor.css';
@@ -205,8 +204,7 @@ class Editor extends Component {
 	}
 
 	buildNaraka() {
-		let model = this.state.engine.getDiagramModel();
-		const narakaModel = narakaBuilder(model,this.state.metadata);
+		let narakaModel = this.state.engine.getModel().build();
 		copy(JSON.stringify(narakaModel));
 	}
 

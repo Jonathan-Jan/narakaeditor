@@ -18,49 +18,6 @@ export class StepNodeModel extends NarakaNodeModel {
 	isStartStep() {
 		return Object.keys(this.ports['in'].links).length === 0;
 	}
-
-	/**
-	 * Construit un objet serializé correspondant à l'étape
-	 * @return {[type]} [description]
-	 */
-	buildNaraka() {
-		//récup des info de base
-		const narakaStep = {
-			mode: this.mode,
-			title: this.title,
-			clearMsg: this.clearMsg,
-			autoNextDelay: this.autoNextDelay,
-			messages: this.messages,
-		};
-
-		//récup des nodes suivant
-		let nextNodes = this.getNextNodes();
-		if (!nextNodes) return narakaStep;
-
-		//si il y a un node unique de type stepnode, il s'agit d'une étape sans réponse (avec une destination unique direct)
-		if (nextNodes.length === 1 && nextNodes[0].type === 'stepnode') {
-			narakaStep.destination = nextNodes[0].id;
-
-			return narakaStep;
-		}
-
-		//récupération des réponses possible
-		narakaStep.answers = nextNodes.map(node => {
-			//seul les noeuds answernode sont traités
-			if (node.type === 'stepnode') {
-				console.warn(`Le Noeud possède des noeuds suivant de type multiple : ${JSON.stringify(narakaStep)}`);
-				return;
-			}
-
-			const answer =  {text:node.text,from:node.from,destination:node.getNextNode() ? node.getNextNode().id : 'none'};
-
-			if (answer.destination === 'none') console.warn(`Réponse sans déstination : ${JSON.stringify(narakaStep)}`);
-
-			return answer;
-		});
-
-		return narakaStep;
-	}
 }
 
 /**

@@ -11,18 +11,6 @@ export class AnswerNodeModel extends NarakaNodeModel {
 	constructor() {
 		super("answernode", {text:''});
 	}
-
-	/**
-	 * retourne le noeud suivant
-	 * @return {[type]} [description]
-	 */
-	getNextNode() {
-		 const nodes = super.getNextNode();
-
-		 if (nodes.length > 1) console.warn(`Noeud message avec plusieurs destination. Seul la première est prise en compte ${JSON.stringify({text:this.text,from:this.from})}`);
-
-		 return nodes[0];
-	}
 }
 
 /**

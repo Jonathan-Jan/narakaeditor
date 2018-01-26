@@ -3,6 +3,8 @@ import {
 } from "storm-react-diagrams";
 import _ from 'lodash';
 
+import NarakaBuilder from 'core/NarakaBuilder';
+
 export class NarakaModel {
 
     constructor(engine) {
@@ -91,5 +93,13 @@ export class NarakaModel {
 
     getMetadata() {
         return this.metadata;
+    }
+
+    getChapters() {
+        return this.chapters;
+    }
+
+    build() {
+        return new NarakaBuilder(this).build();
     }
 }
