@@ -221,9 +221,8 @@ class Editor extends Component {
 					<input value={this.state.defaultTitle} onChange={(e) => this.setState({defaultTitle:e.target.value})}/>
 					<button onClick={() => this.setState({onEditMetadata:true})}>Metadata</button>
 
-					<select>
-						<option onClick={()=>this.loadChapter()} value='firstChapter'>firstChapter</option>
-						{this.state.engine.getModel().getChapterIds().map(id => <option key={id} onClick={()=>this.loadChapter(id)} value={id}>{id}</option>)}
+					<select value={this.state.engine.getModel().getCurrent()} onChange={(event) => this.loadChapter(event.target.value)}>
+						{this.state.engine.getModel().getChapterIds().map(id => <option key={id} value={id}>{id}</option>)}
 					</select>
 					<button onClick={() => this.addChapter()}>new chapters</button>
 					<button onClick={() => this.deleteChapter()}>delete chapters</button>

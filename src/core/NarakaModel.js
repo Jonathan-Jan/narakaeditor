@@ -50,6 +50,9 @@ export class NarakaModel {
         this.current = chapterId;
         this.engine.setDiagramModel(this.chapters[this.current]);
     }
+    getCurrent() {
+        return this.current;
+    }
 
     /**
      * Création d'un StormModel à partir du chapitre dont l'id est passé en parametre
