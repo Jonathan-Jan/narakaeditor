@@ -21,6 +21,7 @@ class Answer extends Component {
             <div style={{padding: '5px 0px 10px 0px'}}>
                 <input style={styles.it} value={this.props.msg.from} onChange={(e) => this.props.onChange({from:e.target.value})} placeholder="from"/>
                 <input style={styles.it} value={this.props.msg.text} onChange={(e) => this.props.onChange({text:e.target.value})} placeholder="text"/>
+                <button onClick={() => this.props.onDelete(this.props.msg)}>Suppr</button>
             </div>
         );
     }
@@ -72,6 +73,15 @@ class EditStepDialog extends Component {
         });
     }
 
+    onDeleteMsg(msg) {
+        let messages = _.filter(this.state.messages, message => {
+            if (message.key !== msg.key) {
+                return message;
+            }
+        });
+        this.setState({messages});
+    }
+
     render() {
         return (
             <div>
@@ -105,7 +115,7 @@ class EditStepDialog extends Component {
                       <span className="message-title">Answers</span>
                       <FlatButton label="Ajouter un message" onClick={() => this.addMsg()}/>
                       <div style={styles.flexC} className="">
-                          {_.map(this.state.messages, (msg) => {return <Answer key={msg.key} msg={msg} onChange={(newData) => this.onChangeMsg(msg,newData)}/>})}
+                          {_.map(this.state.messages, (msg) => {return <Answer key={msg.key} msg={msg} onDelete={this.onDeleteMsg.bind(this)} onChange={(newData) => this.onChangeMsg(msg,newData)}/>})}
                       </div>
                   </div>
 
