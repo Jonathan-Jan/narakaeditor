@@ -8,8 +8,9 @@ import {
 import _ from 'lodash';
 import copy from 'copy-to-clipboard';
 
-import {StepNodeModel,StepNodeFactory} from 'core/StepNode';
-import {AnswerNodeModel,AnswerNodeFactory} from 'core/AnswerNode';
+import {StepNodeModel,StepNodeFactory} from 'core/nodes/StepNode';
+import {AnswerNodeModel,AnswerNodeFactory} from 'core/nodes/AnswerNode';
+import {NextChapterNodeModel,NextChapterNodeWidget} from 'core/nodes/NextChapterNode';
 
 import EditStepDialog from 'components/EditStepDialog';
 import EditAnswerDialog from 'components/EditAnswerDialog';
@@ -41,8 +42,12 @@ class NakaraGraph extends Component {
 							var node = null;
 							if (data.type === "stepnode") {
 								node = new StepNodeModel("sms",this.props.defaultTitle,false);
-							} else if (data.type === "answernode") {
+							}
+							else if (data.type === "answernode") {
 								node = new AnswerNodeModel();
+							}
+							else if (data.type === "nextchapternode") {
+								node = new NextChapterNodeModel();
 							}
 
 							node.addListener({
@@ -218,6 +223,7 @@ class Editor extends Component {
 				<header className="flex-row menu">
 					<TrayItemWidget model={{ type: "stepnode" }} name="Ajouter Etape" />
 					<TrayItemWidget model={{ type: "answernode" }} name="Ajouter réponse" />
+					<TrayItemWidget model={{ type: "nextchapternode" }} name="chapitre suivant" />
 					<input value={this.state.defaultTitle} onChange={(e) => this.setState({defaultTitle:e.target.value})}/>
 					<button onClick={() => this.setState({onEditMetadata:true})}>Metadata</button>
 

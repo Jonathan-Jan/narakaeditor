@@ -3,8 +3,9 @@ import {
     DiagramModel
 } from "storm-react-diagrams";
 
-import {StepNodeFactory} from 'core/StepNode';
-import {AnswerNodeFactory} from 'core/AnswerNode';
+import {StepNodeFactory} from 'core/nodes/StepNode';
+import {AnswerNodeFactory} from 'core/nodes/AnswerNode';
+import {NextChapterNodeFactory} from 'core/nodes/NextChapterNode';
 import {NarakaModel} from 'core/NarakaModel';
 
 class NarakaEngine {
@@ -15,6 +16,8 @@ class NarakaEngine {
 		this.engine.installDefaultFactories();
 		this.engine.registerNodeFactory(new StepNodeFactory());
 		this.engine.registerNodeFactory(new AnswerNodeFactory());
+		this.engine.registerNodeFactory(new NextChapterNodeFactory());
+
     }
 
     getModel() {

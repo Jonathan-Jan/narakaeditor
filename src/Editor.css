@@ -15,12 +15,16 @@
 }
 
 .answernode {
-    background: rgb(115, 98, 147) none repeat scroll 0% 0% !important
+    background: rgb(115, 98, 147) none repeat scroll 0% 0% !important;
 }
 
 .stepnode {
     background: rgb(0,192,255) none repeat scroll 0% 0% !important;
     border-radius: 2px !important;
+}
+
+.nextchapternode {
+    background: rgb(15, 188, 66) none repeat scroll 0% 0% !important;
 }
 
 .storm-diagrams-canvas {

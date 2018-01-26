@@ -14,14 +14,6 @@ export default class TrayItemWidget extends React.Component {
 			border: '1px solid black'
 		};
 
-		let className = '';
-		if (this.props.model.type === 'stepnode') {
-			className = 'stepnode';
-		}
-		else if (this.props.model.type === 'answernode') {
-			className = 'answernode';
-		}
-
 		return (
 			<div
 				style={style}
@@ -29,7 +21,7 @@ export default class TrayItemWidget extends React.Component {
 				onDragStart={event => {
 					event.dataTransfer.setData("storm-diagram-node", JSON.stringify(this.props.model));
 				}}
-				className={className}
+				className={this.props.model.type}
 			>
 				{this.props.name}
 			</div>

@@ -4,61 +4,11 @@ import React from 'react';
 import _ from 'lodash';
 import shortid from 'shortid';
 
-const DefaultPortLabel = SRD.DefaultPortLabel;
+import {NarakaNodeModel,NarakaNodeWidget,getFactory} from 'core/nodes/NarakaNode';
 
-export class StepNodeModel extends SRD.NodeModel {
+export class StepNodeModel extends NarakaNodeModel {
 	constructor(mode,title,clearMsg) {
-		super("stepnode");
-
-		this.addPort(new SRD.DefaultPortModel(true, "in", "E"));
-		this.addPort(new SRD.DefaultPortModel(false, "out", "S"));
-
-		this.mode = mode;
-		this.title = title;
-		this.clearMsg = false;
-		this.autoNextDelay = '';
-        this.messages = [];
-	}
-
-	deSerialize(object) {
-		super.deSerialize(object);
-		this.mode = object.mode;
-		this.title = object.title;
-		this.clearMsg = object.clearMsg;
-		this.autoNextDelay = object.autoNextDelay;
-		this.messages = object.messages;
-	}
-
-	serialize() {
-
-		return _.merge(super.serialize(), {
-			mode: this.mode,
-			title: this.title,
-			clearMsg: this.clearMsg,
-			autoNextDelay: this.autoNextDelay,
-			messages: this.messages,
-		});
-	}
-
-	getInPorts() {
-		return _.filter(this.ports, (p) => {
-			if (p.in) return p;
-		});
-	}
-
-	getOutPorts() {
-		return _.filter(this.ports, (p) => {
-			if (!p.in) return p;
-		});
-	}
-
-	remove() {
-		super.remove();
-		for (var i in this.ports) {
-			_.forEach(this.ports[i].getLinks(), link => {
-				link.remove();
-			});
-		}
+		super("stepnode",{mode:mode,title:title,clearMsg:false,autoNextDelay:'',messages:[]});
 	}
 
 	/**
@@ -67,21 +17,6 @@ export class StepNodeModel extends SRD.NodeModel {
 	 */
 	isStartStep() {
 		return Object.keys(this.ports['in'].links).length === 0;
-	}
-
-	getNextNodes() {
-		 //model.getNodes() => node.ports.links.targetPort.parentNode
-		 const links = _.values(this.ports['out'].links);
-
-		 return links.map((link) => {
-			 let node = link.targetPort.parentNode;
-
-			 if (node.id === this.id) {
-				 node = link.sourcePort.parentNode;
-			 }
-
-			 return node;
-		 });
 	}
 
 	/**
@@ -128,31 +63,12 @@ export class StepNodeModel extends SRD.NodeModel {
 	}
 }
 
-export class StepNodeFactory extends SRD.NodeFactory {
-	constructor() {
-		super("stepnode");
-	}
-
-	generateReactWidget(diagramEngine, node) {
-		return StepNodeWidgetFactory({ node: node });
-	}
-
-	getNewInstance() {
-		return new StepNodeModel();
-	}
-}
-
 /**
  * @author Dylan Vorster
  */
-export class StepNodeWidget extends React.Component {
+export class StepNodeWidget extends NarakaNodeWidget {
 	constructor(props) {
 		super(props);
-		this.state = {};
-	}
-
-	generatePort(port) {
-		return <DefaultPortLabel model={port} key={port.id} />;
 	}
 
 	generateAnswer(message) {
@@ -168,7 +84,6 @@ export class StepNodeWidget extends React.Component {
 			default:
 				return 'white';
 		}
-		return 'blue';
 	}
 
 	render() {
@@ -191,4 +106,5 @@ export class StepNodeWidget extends React.Component {
 	}
 }
 
-const StepNodeWidgetFactory = React.createFactory(StepNodeWidget);
+const StepNodeFactory = getFactory('stepnode',React.createFactory(StepNodeWidget),StepNodeModel);
+export {StepNodeFactory}
