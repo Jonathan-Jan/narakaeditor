@@ -23,9 +23,11 @@ class EditNextChapterDialog extends Component {
 
     componentWillReceiveProps(nextProps) {
 
-        if(!nextProps.chapters || nextProps.chapters.length <= 0) return;
+        let {chapters,node} = nextProps;
 
-        let chapterId = nextProps.chapters[0];
+        if((!chapters || chapters.length <= 0) && !node.chapterId) return;
+
+        let chapterId = node.chapterId || nextProps.chapters[0];
 
         this.setState({chapterId});
     }
