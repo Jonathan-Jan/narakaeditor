@@ -100,6 +100,12 @@ class Editor extends Component {
 				e.preventDefault();
 			}
 		}, true);
+		window.addEventListener('keydown', (e) => {
+			if (e.ctrlKey && e.code === 'KeyC') {
+				this.followToChapter();
+				e.preventDefault();
+			}
+		}, true);
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -157,6 +163,15 @@ class Editor extends Component {
 		}
 
 		this.setState(newState);
+	}
+
+	followToChapter() {
+		const selected = this.state.selected;
+		if (!selected) return;
+		if (selected.type !== "nextchapternode") return;
+
+		this.state.engine.loadChapter(selected.chapterId);
+		this.forceUpdate();
 	}
 
 	onRemove(event) {
@@ -259,6 +274,9 @@ class Editor extends Component {
 					{this.state.selected && this.state.selected.type === 'stepnode' && <button onClick={() => this.setState({onEditStep:true})}>Editer (CTRL+E)</button>}
 					{this.state.selected && this.state.selected.type === 'answernode'&& <button onClick={() => this.setState({onEditAnswer:true})}>Editer (CTRL+E)</button>}
 					{this.state.selected && this.state.selected.type === 'nextchapternode'&& <button onClick={() => this.setState({onEditNextChapter:true})}>Editer (CTRL+E)</button>}
+
+					{this.state.selected && this.state.selected.type === 'nextchapternode'&& <button onClick={() => this.followToChapter()}>Aller au chapitre (CTRL+C)</button>}
+
 				</header>
 				<NakaraGraph engine={this.state.engine.getDiagramEngine()} {...graphProps}/>
 
