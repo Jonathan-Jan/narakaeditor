@@ -144,7 +144,7 @@ class Editor extends Component {
 	}
 
 	onRemove(event) {
-		this.state.model.removeNode(event.entity);
+		this.state.engine.getDiagramModel().removeNode(event.entity);
 		this.forceUpdate();
 
 	}
