@@ -16,6 +16,7 @@ import EditStepDialog from 'components/EditStepDialog';
 import EditAnswerDialog from 'components/EditAnswerDialog';
 import EditNextChapterDialog from 'components/EditNextChapterDialog';
 import MetadataDialog from 'components/MetadataDialog';
+import DialogBackToParent from 'components/DialogBackToParent';
 import TrayItemWidget from 'components/TrayItemWidget';
 
 import {getEngine} from 'core/NarakaEngine';
@@ -88,6 +89,7 @@ class Editor extends Component {
 			onEditAnswer:false,
 			onEditNextChapter:false,
 			onEditMetadata:false,
+			backToParentOpen:false,
 
 			selected:undefined
 		}
@@ -182,7 +184,10 @@ class Editor extends Component {
 
 	followBackToChapterParent() {
 		const chaptersParents = this.state.engine.getModel().getChapterParent();
-		if(chaptersParents.length === 0) return;
+		if(chaptersParents.length === 0) {
+			window.alert('Aucun parent');
+			return;
+		}
 
 		if(chaptersParents.length === 1) {
 			this.state.engine.loadChapter(chaptersParents[0]);
@@ -190,7 +195,7 @@ class Editor extends Component {
 			return;
 		}
 
-		window.alert(JSON.stringify(chaptersParents));
+		this.setState({backToParentOpen:true});
 	}
 
 	onRemove(event) {
@@ -269,6 +274,13 @@ class Editor extends Component {
 			onClose:this.onCloseEditorMetadata.bind(this)
 		}
 
+		const dialogBackToParentProps = {
+			open:this.state.backToParentOpen,
+			chapters:this.state.backToParentOpen ? this.state.engine.getModel().getChapterParent() : [],
+			onClose:() => {this.setState({backToParentOpen:false})},
+			loadChapter:(chapterId) => {this.state.engine.loadChapter(chapterId);this.forceUpdate();this.setState({backToParentOpen:false})}
+		}
+
 		return (
 			<div style={{height:'100%'}}>
 				<header className="flex-row menu">
@@ -305,6 +317,8 @@ class Editor extends Component {
 				{this.state.selected && this.state.selected.type === 'nextchapternode' && <EditNextChapterDialog open={this.state.onEditNextChapter} node={this.state.selected} chapters={this.state.engine.getModel().getChapterIds()} onClose={(newStep) => this.onCloseEditorNextChapter(newStep)}/>}
 
 				<MetadataDialog open={this.state.onEditMetadata} {...metadataDialogProps}/>
+
+				<DialogBackToParent {...dialogBackToParentProps}/>
 			</div>
 		);
 	}
