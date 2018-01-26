@@ -18,9 +18,9 @@ class Answer extends Component {
 
     render() {
         return (
-            <div>
-                <TextField style={styles.it} value={this.props.msg.from} onChange={(e) => this.props.onChange({from:e.target.value})} hintText="from"/>
-                <TextField style={styles.it} value={this.props.msg.text} onChange={(e) => this.props.onChange({text:e.target.value})} hintText="text"/>
+            <div style={{padding: '5px 0px 10px 0px'}}>
+                <input style={styles.it} value={this.props.msg.from} onChange={(e) => this.props.onChange({from:e.target.value})} placeholder="from"/>
+                <input style={styles.it} value={this.props.msg.text} onChange={(e) => this.props.onChange({text:e.target.value})} placeholder="text"/>
             </div>
         );
     }
