@@ -287,9 +287,9 @@ class Editor extends Component {
 		return (
 			<div style={{height:'100%'}}>
 				<header className="flex-row menu">
-					<TrayItemWidget model={{ type: "stepnode" }} name="Ajouter Etape" />
-					<TrayItemWidget model={{ type: "answernode" }} name="Ajouter réponse" />
-					<TrayItemWidget model={{ type: "nextchapternode" }} name="chapitre suivant" />
+					<TrayItemWidget model={{ type: "stepnode" }} name="Add Step" />
+					<TrayItemWidget model={{ type: "answernode" }} name="Add answer" />
+					<TrayItemWidget model={{ type: "nextchapternode" }} name="Add node to next chapter" />
 					<input value={this.state.defaultTitle} onChange={(e) => this.setState({defaultTitle:e.target.value})}/>
 					<button onClick={() => this.setState({onEditMetadata:true})}>Metadata</button>
 
@@ -306,9 +306,9 @@ class Editor extends Component {
 					<button onClick={() => this.serialize()}>Serialize to clipboard</button>
 					<button onClick={() => this.buildNaraka()}>build Naraka</button>
 
-					{this.state.selected && this.state.selected.type === 'stepnode' && <button onClick={() => this.setState({onEditStep:true})}>Editer (CTRL+E)</button>}
-					{this.state.selected && this.state.selected.type === 'answernode'&& <button onClick={() => this.setState({onEditAnswer:true})}>Editer (CTRL+E)</button>}
-					{this.state.selected && this.state.selected.type === 'nextchapternode'&& <button onClick={() => this.setState({onEditNextChapter:true})}>Editer (CTRL+E)</button>}
+					{this.state.selected && this.state.selected.type === 'stepnode' && <button onClick={() => this.setState({onEditStep:true})}>Edit (CTRL+E)</button>}
+					{this.state.selected && this.state.selected.type === 'answernode'&& <button onClick={() => this.setState({onEditAnswer:true})}>Edit (CTRL+E)</button>}
+					{this.state.selected && this.state.selected.type === 'nextchapternode'&& <button onClick={() => this.setState({onEditNextChapter:true})}>Edit (CTRL+E)</button>}
 
 					{this.state.selected && this.state.selected.type === 'nextchapternode'&& <button onClick={() => this.followToChapter()}>Go to chapter (CTRL+C)</button>}
 					<button onClick={() => this.followBackToChapterParent()}>parent chapter(CTRL+B)</button>
