@@ -1,5 +1,7 @@
 # Naraka Editor
 
+http://jonathan-jan.fr/other/narakaeditor/
+
 ## What
 This software allow you to create a story runnable by Naraka. See Naraka for more informations. This is a full client application with no backend.
 
