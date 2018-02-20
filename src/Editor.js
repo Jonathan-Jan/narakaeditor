@@ -19,7 +19,7 @@ import TrayItemWidget from 'components/TrayItemWidget';
 
 import {getEngine} from 'core/NarakaEngine';
 
-import modelSerialized from 'savedmodel/narakamodel.json';
+//import modelSerialized from 'savedmodel/narakamodel.json';
 
 import 'Editor.css';
 
@@ -73,7 +73,7 @@ class Editor extends Component {
 
 		//1) setup the diagram engine
 		let engine = getEngine();
-		engine.getModel().deSerialize(modelSerialized);
+		// engine.getModel().deSerialize(modelSerialized);
 
 		this.state = {
 			engine:engine,
@@ -229,6 +229,14 @@ class Editor extends Component {
 		this.setState({onEditNextChapter:false});
 	}
 
+	loadFromJson() {
+		let input = window.prompt('Json of serialized naraka : ');
+		if (!input) return;
+		this.state.engine.getModel().deSerialize(JSON.parse(input));
+		this.addListenerToNode();
+		this.forceUpdate();
+	}
+
 	serialize() {
 		// let serialized = this.state.model.serializeDiagram();
 		// serialized._metadata = this.state.metadata;
@@ -294,6 +302,7 @@ class Editor extends Component {
 
 					<div className="flex1"></div>
 
+					<button onClick={() => this.loadFromJson()}>Serialize from input</button>
 					<button onClick={() => this.serialize()}>Serialize to clipboard</button>
 					<button onClick={() => this.buildNaraka()}>build Naraka</button>
 
@@ -301,8 +310,8 @@ class Editor extends Component {
 					{this.state.selected && this.state.selected.type === 'answernode'&& <button onClick={() => this.setState({onEditAnswer:true})}>Editer (CTRL+E)</button>}
 					{this.state.selected && this.state.selected.type === 'nextchapternode'&& <button onClick={() => this.setState({onEditNextChapter:true})}>Editer (CTRL+E)</button>}
 
-					{this.state.selected && this.state.selected.type === 'nextchapternode'&& <button onClick={() => this.followToChapter()}>Aller au chapitre (CTRL+C)</button>}
-					<button onClick={() => this.followBackToChapterParent()}>Retour chapitre parent (CTRL+B)</button>
+					{this.state.selected && this.state.selected.type === 'nextchapternode'&& <button onClick={() => this.followToChapter()}>Go to chapter (CTRL+C)</button>}
+					<button onClick={() => this.followBackToChapterParent()}>parent chapter(CTRL+B)</button>
 
 				</header>
 				<NakaraGraph engine={this.state.engine.getDiagramEngine()} {...graphProps}/>
